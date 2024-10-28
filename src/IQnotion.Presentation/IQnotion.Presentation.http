@@ -1,0 +1,6 @@
+@IQnotion.Presentation_HostAddress = http://localhost:5169
+
+GET {{IQnotion.Presentation_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
