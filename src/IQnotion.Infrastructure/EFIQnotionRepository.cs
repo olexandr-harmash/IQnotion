@@ -12,10 +12,20 @@ public class EFIQnotionRepository : IIQnotionNotionRepository
         _context = context;
     }
 
+    public Task<UserNotion?> FindUserNotionByNotionId(int notionId)
+    {
+        return (
+            _context.UserNotions
+            .AsNoTracking()
+            .FirstOrDefaultAsync(un => un.FileId == notionId)
+        );
+    }
+
     public Task<Notion?> RetrieveNotionNotViewedByUser(int userId, string type)
     {
         return (
             _context.Notions
+                .AsNoTracking()
                 .Where(n => n.Type == type)
                 .GroupJoin(
                     _context.UserNotions.Where(u => u.UserId == userId),
@@ -29,4 +39,12 @@ public class EFIQnotionRepository : IIQnotionNotionRepository
         );
     }
 
+    public async Task CreateUserNotion(UserNotion userNotion)
+    {
+         // Добавляем объект без отслеживания
+        _context.UserNotions.Add(userNotion);
+        
+        // Сохраняем изменения в базе данных
+        await _context.SaveChangesAsync();
+    }
 }

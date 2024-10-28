@@ -13,10 +13,11 @@ public static class IQnotionDbContextExtensions
 
         services.AddDbContext<IQnotionDbContext>(opt => 
             opt.UseNpgsql(connection, options => 
-                options.MigrationsAssembly("IQnotion.Presentation")
+                options.MigrationsAssembly("IQnotion.Infrastructure")
             )
         );
 
+        services.AddScoped<IQnotionDbSeed>();
         services.AddScoped<IIQnotionNotionRepository, EFIQnotionRepository>();
 
         return services;

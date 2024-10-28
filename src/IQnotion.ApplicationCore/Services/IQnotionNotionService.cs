@@ -22,6 +22,15 @@ public class IQnotionNotionService : IIQnotionNotionService
             throw new NotionNotFoundException(userId, type);
         }
 
+        var userNotion = new UserNotion
+        {
+            FileId = notion.Id,
+            UserId = userId,
+            Action = "Viewed"
+        };
+
+        await _repository.CreateUserNotion(userNotion);
+
         return notion;
     }
 }
