@@ -19,5 +19,4 @@
   <ItemGroup>
     <ProjectReference Include="..\IQnotion.Infrastructure\IQnotion.Infrastructure.csproj" />
   </ItemGroup>
-
 </Project>

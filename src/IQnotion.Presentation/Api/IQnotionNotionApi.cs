@@ -11,11 +11,11 @@ public static class IQnotionNotionApi
         return app;
     }
 
-    static async Task<IResult> RetrieveNotionNotViewedByUser(string type, IQnotionServices services)
+    static async Task<IResult> RetrieveNotionNotViewedByUser(int userId, string type, IQnotionServices services)
     {
         try
         {
-            var notion = await services.Notion.RetrieveNotionNotViewedByUser(1, type);
+            var notion = await services.Notion.RetrieveNotionNotViewedByUser(userId, type);
             return TypedResults.Ok(notion);
         } catch(NotionNotFoundException ex)
         {
