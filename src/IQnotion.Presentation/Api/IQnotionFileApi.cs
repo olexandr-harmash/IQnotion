@@ -11,7 +11,7 @@ public static class IQnotionFileApi
 
     static IResult GetFileByPath(string lang, string path, IQnotionServices services)
     {
-        var fullPath = Path.GetFullPath(Path.Join(services.Env.ContentRootPath, lang, path));
+        var fullPath = Path.GetFullPath(Path.Join(services.NotionRootPath, lang, path));
 
         if(File.Exists(fullPath))
         {
