@@ -16,8 +16,7 @@
       "launchUrl": "swagger",
       "applicationUrl": "http://localhost:5169",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_CONTENTROOT": "D:\\Git\\IQnotion\\notions"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "https": {
@@ -27,8 +26,7 @@
       "launchUrl": "swagger",
       "applicationUrl": "https://localhost:7154;http://localhost:5169",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_CONTENTROOT": "D:\\Git\\IQnotion\\notions"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "IIS Express": {
@@ -36,8 +34,7 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_CONTENTROOT": "D:\\Git\\IQnotion\\notions"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
   }

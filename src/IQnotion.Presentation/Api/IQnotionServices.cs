@@ -3,9 +3,10 @@ using IQnotion.ApplicationCore.Interfaces;
 public class IQnotionServices(
     ILogger<IQnotionServices> logger,
     IIQnotionNotionService notion,
-    IWebHostEnvironment env)
+    IConfiguration config)
 {
     public ILogger<IQnotionServices> Logger = logger;
     public IIQnotionNotionService Notion = notion;
-    public IWebHostEnvironment Env = env;
+    public IConfiguration Config = config;
+    public string NotionRootPath = config["NotionRootPath"]!;
 }
