@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -18,5 +19,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\IQnotion.Infrastructure\IQnotion.Infrastructure.csproj" />
+    <ProjectReference Include="..\IQnotion.ApplicationCore\IQnotion.ApplicationCore.csproj" />
   </ItemGroup>
 </Project>
