@@ -1,10 +1,7 @@
-using System.Reflection;
-using IQnotion.ApplicationCore;
 using IQnotion.Infrastructure;
+using IQnotion.Presentation.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddScoped<IQnotionServices>();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -12,7 +9,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.ConfigureIQnotionDbContext(builder.Configuration);
-builder.Services.ConfigureIQnotionCore();
+builder.Services.ConfigureIQnotionApplicationCore();
+
+builder.Services.ConfigureIQnotionJWTAuthentication(builder.Configuration);
+builder.Services.AddAuthorization();
+
+builder.Services.AddControllers(); 
 
 var app = builder.Build();
 
@@ -31,7 +33,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-IQnotionFileApi.ConfigureRouting(app);
-IQnotionNotionApi.ConfigureRouting(app);
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
 
 app.Run();
