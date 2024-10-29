@@ -27,8 +27,7 @@ public class NotionController : ControllerBase
             }
 
             var userId = int.Parse(userIdClaim.Value);
-            Console.WriteLine(userId);
-            var notion = await _services.UnitOfWork.Notion.RetrieveNotionNotViewedByUserAsync(userId, type);
+            var notion = await _services.Notion.RetrieveNotionNotViewedByUserAsync(userId, type);
 
             return TypedResults.Ok(notion);
         } 
