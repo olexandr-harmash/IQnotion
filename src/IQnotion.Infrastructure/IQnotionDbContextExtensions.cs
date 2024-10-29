@@ -1,4 +1,5 @@
 using IQnotion.ApplicationCore.Interfaces;
+using IQnotion.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,7 +19,9 @@ public static class IQnotionDbContextExtensions
         );
 
         services.AddScoped<IQnotionDbSeed>();
+        services.AddScoped<IIQnotionUnitOfWork, EFIQnotionUnitOfWork>();
         services.AddScoped<IIQnotionNotionRepository, EFIQnotionRepository>();
+        services.AddScoped<IIQnotionUserNotionRepository, EFIQnotionUserNotionRepository>();
 
         return services;
     }

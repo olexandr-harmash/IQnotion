@@ -6,11 +6,12 @@ public class UserNotionEntityTypeConfiguration  : IEntityTypeConfiguration<UserN
 {
     public void Configure(EntityTypeBuilder<UserNotion> builder)
     {
-        builder.HasKey(un => un.Id);
+        builder.HasKey(un => new { un.Id, un.UserId, un.FileId });
 
         // Настройка полей
         builder.Property(un => un.Action)
-            .IsRequired();
+            .IsRequired()
+            .HasMaxLength(255);
 
         builder.Property(un => un.ViewedAt)
             .HasDefaultValueSql("CURRENT_TIMESTAMP");

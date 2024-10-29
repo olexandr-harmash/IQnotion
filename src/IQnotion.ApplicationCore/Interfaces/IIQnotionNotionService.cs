@@ -4,5 +4,5 @@ namespace IQnotion.ApplicationCore.Interfaces;
 
 public interface IIQnotionNotionService
 {
-    public Task<Notion> RetrieveNotionNotViewedByUser(int userId, string type);
+    public Task<Notion> RetrieveNotionNotViewedByUserAsync(int userId, string type);
 }

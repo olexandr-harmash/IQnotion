@@ -6,16 +6,16 @@ namespace IQnotion.ApplicationCore.Services;
 
 public class IQnotionNotionService : IIQnotionNotionService
 {
-    readonly IIQnotionNotionRepository _repository = null!;
+    readonly IIQnotionUnitOfWork _unitOfWork = null!;
 
-    public IQnotionNotionService(IIQnotionNotionRepository repository)
+    public IQnotionNotionService(IIQnotionUnitOfWork unitOfWork)
     {
-        _repository = repository;
+        _unitOfWork = unitOfWork;
     }
 
-    public async Task<Notion> RetrieveNotionNotViewedByUser(int userId, string type)
+    public async Task<Notion> RetrieveNotionNotViewedByUserAsync(int userId, string type)
     {
-        var notion = await _repository.RetrieveNotionNotViewedByUser(userId, type);
+        var notion = await _unitOfWork.Notion.RetrieveNotionNotViewedByUserAsync(userId, type);
 
         if (notion == null)
         {
@@ -29,7 +29,9 @@ public class IQnotionNotionService : IIQnotionNotionService
             Action = "Viewed"
         };
 
-        await _repository.CreateUserNotion(userNotion);
+        _unitOfWork.UserNotion.AddUserNotion(userNotion);
+
+        await _unitOfWork.SaveChangesAsync();
 
         return notion;
     }

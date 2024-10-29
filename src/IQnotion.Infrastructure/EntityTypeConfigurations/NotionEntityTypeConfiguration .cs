@@ -16,9 +16,13 @@ public class NotionEntityTypeConfiguration  : IEntityTypeConfiguration<Notion>
             .HasMaxLength(255);
 
         builder.Property(n => n.RelativePath)
-            .IsRequired();
+            .IsRequired()
+            .HasMaxLength(255);
 
         builder.Property(n => n.Type)
-            .IsRequired();
+            .IsRequired()
+            .HasMaxLength(255);
+        
+        builder.HasIndex(n => n.Type);
     }
 }

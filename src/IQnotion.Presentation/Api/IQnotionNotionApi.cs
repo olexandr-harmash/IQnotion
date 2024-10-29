@@ -15,13 +15,15 @@ public static class IQnotionNotionApi
     {
         try
         {
-            var notion = await services.Notion.RetrieveNotionNotViewedByUser(userId, type);
+            var notion = await services.UnitOfWork.Notion.RetrieveNotionNotViewedByUserAsync(userId, type);
             return TypedResults.Ok(notion);
-        } catch(NotionNotFoundException ex)
+        } 
+        catch(NotionNotFoundException ex)
         {
             services.Logger.LogWarning(ex.Message);
             return TypedResults.NotFound();
-        } catch (Exception ex)
+        } 
+        catch (Exception ex)
         {
             services.Logger.LogCritical(ex.Message);
             return TypedResults.StatusCode(500);

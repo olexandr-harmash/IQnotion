@@ -2,11 +2,10 @@ using IQnotion.ApplicationCore.Interfaces;
 
 public class IQnotionServices(
     ILogger<IQnotionServices> logger,
-    IIQnotionNotionService notion,
+    IIQnotionUnitOfWork unitOfWork,
     IConfiguration config)
 {
     public ILogger<IQnotionServices> Logger = logger;
-    public IIQnotionNotionService Notion = notion;
-    public IConfiguration Config = config;
+    public IIQnotionUnitOfWork UnitOfWork = unitOfWork;
     public string NotionRootPath = config["NotionRootPath"]!;
 }
