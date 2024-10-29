@@ -1,10 +1,10 @@
 namespace IQnotion.ApplicationCore.DataTransferObjects;
 
-public class NotionDetailedDto
+public record NotionDetailedDto
 {
-    public int Id;
-    public int FileName;
-    public int RelativePath;
-    public string Type = null!;
-    public List<string> SupportLanguages = null!;
+    public int Id { get; init; }
+    public int FileName { get; init; }
+    public int RelativePath { get; init; }
+    public string Type { get; init; } = null!;
+    public List<string> SupportLanguages { get; init; } = null!;
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using IQnotion.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace IQnotion.Infrastructure.Migrations
 {
     [DbContext(typeof(IQnotionDbContext))]
-    partial class IQnotionDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241029213455_InitialIQDbContextCreate")]
+    partial class InitialIQDbContextCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
