@@ -1,5 +1,7 @@
+using IQnotion.ApplicationCore.DataTransferObjects;
 using IQnotion.ApplicationCore.Interfaces;
 using IQnotion.ApplicationCore.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace IQnotion.Infrastructure.Repositories;
 

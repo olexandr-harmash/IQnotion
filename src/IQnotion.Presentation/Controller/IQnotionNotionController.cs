@@ -1,4 +1,6 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using IQnotion.ApplicationCore.DataTransferObjects;
 using IQnotion.ApplicationCore.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +22,7 @@ public class NotionController : ControllerBase
     {
         try
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            var userIdClaim = User.FindFirst(JwtRegisteredClaimNames.Sub);
             if (userIdClaim == null)
             {
                 return TypedResults.Unauthorized();
@@ -35,6 +37,29 @@ public class NotionController : ControllerBase
         {
             _services.Logger.LogWarning(ex.Message);
             return TypedResults.NotFound();
+        } 
+        catch (Exception ex)
+        {
+            _services.Logger.LogCritical(ex.Message);
+            return TypedResults.StatusCode(500);
+        }
+    }
+
+    [HttpGet]
+    public async Task<IResult> RetrieveNotionViewedByUser()
+    {
+        try
+        {
+            var userIdClaim = User.FindFirst(JwtRegisteredClaimNames.Sub);
+            if (userIdClaim == null)
+            {
+                return TypedResults.Unauthorized();
+            }
+
+            var userId = int.Parse(userIdClaim.Value);
+            var notion = await _services.Notion.RetrieveNotionViewedByUserAsync(userId);
+
+            return TypedResults.Ok(notion);
         } 
         catch (Exception ex)
         {
