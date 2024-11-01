@@ -18,13 +18,6 @@ public class IQnotionDbSeed
     public async Task SeedAsync()
     {
         _context.Database.Migrate();
-
-        // Создайте роли, если они не существуют
-     
-        if (!await _roleManager.RoleExistsAsync("reader"))
-        {
-            await _roleManager.CreateAsync(new IdentityRole<int> { Name = "reader", NormalizedName = "READER" });
-        }
         
         // Проверьте, существуют ли уже данные
         if (_context.Notions.Any() || _context.UserNotions.Any())

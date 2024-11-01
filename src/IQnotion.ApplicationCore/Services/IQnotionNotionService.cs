@@ -1,3 +1,4 @@
+using IQnotion.ApplicationCore.DataTransferObjects;
 using IQnotion.ApplicationCore.Exceptions;
 using IQnotion.ApplicationCore.Interfaces;
 using IQnotion.ApplicationCore.Models;
@@ -11,6 +12,11 @@ public class IQnotionNotionService : IIQnotionNotionService
     public IQnotionNotionService(IIQnotionUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
+    }
+
+    public async Task<List<Notion>> RetrieveNotionViewedByUserAsync(int userId)
+    {
+        return await _unitOfWork.Notion.RetrieveNotionViewedByUserAsync(userId);
     }
 
     public async Task<Notion> RetrieveNotionNotViewedByUserAsync(int userId, string type)

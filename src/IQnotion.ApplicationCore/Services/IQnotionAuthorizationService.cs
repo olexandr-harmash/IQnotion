@@ -1,12 +1,11 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using IQnotion.ApplicationCore.DataTransferObjects;
 using IQnotion.ApplicationCore.Exceptions;
 using IQnotion.ApplicationCore.Interfaces;
 using IQnotion.ApplicationCore.Models;
+using IQnotion.ApplicationCore.Options;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace IQnotion.ApplicationCore.Services;
@@ -15,21 +14,42 @@ public class IQnotionAuthorizationService : IIQnotionAuthorizationService
 {
     private User? _user;
     private readonly UserManager<User> _userManager;
-    private readonly IConfiguration _configuration;
+    private readonly IQnotionAuthorizationOptions _authOptions;
 
-    public IQnotionAuthorizationService(UserManager<User> userManager, IConfiguration configuration)
+    public IQnotionAuthorizationService(UserManager<User> userManager, IQnotionAuthorizationOptions authOptions)
     {
         _userManager = userManager;
-        _configuration = configuration;
+        _authOptions = authOptions;
     }
 
-    public async Task<string> CreateToken()
+    public string CreateToken()
     {
-        var signingCredentials = GetSigningCredentials();
-        var claims = await GetClaims();
-        var tokenOptions = GenerateTokenOptions(signingCredentials, claims);
+        if (_user == null)
+        {
+            throw new UserNotFoundException();
+        }
+
+        var secret = Environment.GetEnvironmentVariable("SECRET") ?? throw new ArgumentNullException("SECRET");
         
-        return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+        var signingKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(secret));
+
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Issuer = _authOptions.ValidIssuer,
+            Audience = _authOptions.ValidAudience,
+            Subject = new ClaimsIdentity(
+            [
+                new Claim(JwtRegisteredClaimNames.Sub, _user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Уникальный идентификатор токена
+            ]),
+            Expires = DateTime.UtcNow.AddMinutes(15), // Время жизни токена
+            SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
+        };
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+
+        return tokenHandler.WriteToken(token);
     }
 
     public async Task<IdentityResult> RegisterUser(RegisterUserDto userForRegistration)
@@ -41,64 +61,20 @@ public class IQnotionAuthorizationService : IIQnotionAuthorizationService
             UserName    = userForRegistration.UserName,
             Email       = userForRegistration.Email,
             PhoneNumber = userForRegistration.PhoneNumber,
-        };
+        };     
 
-        var result = await _userManager.CreateAsync(user, userForRegistration.Password);
-        
-        if (result.Succeeded)
+        return await _userManager.CreateAsync(user, userForRegistration.Password);
+    }
+
+    public async Task ValidateUser(UserForAuthenticationDto userForAuth)
+    {
+        var user = await _userManager.FindByNameAsync(userForAuth.UserName);
+
+        if (user == null && await _userManager.CheckPasswordAsync(user, userForAuth.Password))
         {
-            await _userManager.AddToRolesAsync(user, new List<string> { "READER" });
+            throw new UserNotFoundException();
         }
 
-        return result;
-    }
-
-    public async Task<bool> ValidateUser(UserForAuthenticationDto userForAuth)
-    {
-        _user = await _userManager.FindByNameAsync(userForAuth.UserName);
-
-        var result = (_user != null && await _userManager.CheckPasswordAsync(_user, userForAuth.Password));
-     
-        return result;
-    }
-
-    private SigningCredentials GetSigningCredentials()
-    {
-        var key = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRET"));
-        var secret = new SymmetricSecurityKey(key);
-        
-        return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
-    }
-
-    private async Task<List<Claim>> GetClaims()
-    {
-        var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.NameIdentifier, _user.Id.ToString()),
-            new Claim(ClaimTypes.Name, _user.UserName)
-        };
-
-        var roles = await _userManager.GetRolesAsync(_user);
-        foreach (var role in roles)
-        {
-            claims.Add(new Claim(ClaimTypes.Role, role));
-        }
-
-        return claims;
-    }
-
-    private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
-    {
-        var jwtSettings = _configuration.GetSection("JwtSettings");
-        var tokenOptions = new JwtSecurityToken
-        (
-            issuer: jwtSettings["validIssuer"],
-            audience: jwtSettings["validAudience"],
-            claims: claims,
-            expires: DateTime.Now.AddMinutes(Convert.ToDouble(jwtSettings["expires"])),
-            signingCredentials: signingCredentials
-        );
-
-        return tokenOptions;
+        _user = user;
     }
 }

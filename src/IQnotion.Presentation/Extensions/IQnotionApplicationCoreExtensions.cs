@@ -1,6 +1,7 @@
 using System.Text;
 using IQnotion.ApplicationCore.Interfaces;
 using IQnotion.ApplicationCore.Models;
+using IQnotion.ApplicationCore.Options;
 using IQnotion.ApplicationCore.Services;
 using IQnotion.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -36,9 +37,10 @@ public static class IQnotionDbContextExtensions
 
     public static IServiceCollection ConfigureIQnotionJWTAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
-        var jwtSettings = configuration.GetSection("JwtSettings");
-        var secretKey = Environment.GetEnvironmentVariable("SECRET");
-        
+        var secret = Environment.GetEnvironmentVariable("SECRET") ?? throw new ArgumentNullException("SECRET");
+
+        services.Configure<IQnotionAuthorizationOptions>(configuration.GetSection("JwtSettings"));
+
         services.AddAuthentication(opt =>
         {
             opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -53,9 +55,9 @@ public static class IQnotionDbContextExtensions
                 ValidateAudience         = true,
                 ValidateLifetime         = true,
                 ValidateIssuerSigningKey = true,
-                ValidIssuer              = jwtSettings["validIssuer"],
-                ValidAudience            = jwtSettings["validAudience"],
-                IssuerSigningKey         = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+                ValidIssuer              = configuration["JwtSettings:ValidIssuer"],
+                ValidAudience            = configuration["JwtSettings:ValidAudience"],
+                IssuerSigningKey         = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret))
             };
         });
 

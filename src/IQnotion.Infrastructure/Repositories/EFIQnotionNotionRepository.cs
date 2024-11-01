@@ -1,3 +1,4 @@
+using IQnotion.ApplicationCore.DataTransferObjects;
 using IQnotion.ApplicationCore.Interfaces;
 using IQnotion.ApplicationCore.Models;
 using Microsoft.EntityFrameworkCore;
@@ -28,6 +29,22 @@ public class EFIQnotionRepository : IIQnotionNotionRepository
                 .Select(joined => joined.Notion)
                 .AsNoTracking()
                 .FirstOrDefaultAsync()
+        );
+    }
+
+    public Task<List<Notion>> RetrieveNotionViewedByUserAsync(int userId)
+    {
+        return (  
+            _context.UserNotions
+                .Where(un => un.UserId == userId)
+                .GroupJoin(
+                    _context.Notions,
+                    history => history.FileId,
+                    notion => notion.Id,
+                    (history, notions) => notions.First()
+                )     
+                .AsNoTracking()
+                .ToListAsync()
         );
     }
 }

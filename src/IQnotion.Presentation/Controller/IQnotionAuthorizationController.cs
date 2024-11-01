@@ -1,4 +1,5 @@
 using IQnotion.ApplicationCore.DataTransferObjects;
+using IQnotion.ApplicationCore.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -43,15 +44,14 @@ public class AuthorizationController : ControllerBase
     {
         try
         {
-            var isValid = await _services.Authorization.ValidateUser(user);
+            await _services.Authorization.ValidateUser(user);
 
-            if (!isValid)
-            {
-                return TypedResults.Unauthorized();
-            }
-
-            return TypedResults.Ok(new { Token = await _services.Authorization.CreateToken() });
-        } 
+            return TypedResults.Ok(new { Token = _services.Authorization.CreateToken() });
+        }
+        catch (UserNotFoundException)
+        {
+            return TypedResults.Unauthorized();
+        }
         catch (Exception)
         {
             return TypedResults.StatusCode(500);
