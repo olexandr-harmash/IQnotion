@@ -1,8 +1,8 @@
-using IQnotion.ApplicationCore.Models;
+using IQnotion.ApplicationCore.DataTransferObjects;
 
 namespace IQnotion.ApplicationCore.Interfaces;
 
 public interface IIQnotionNotionService
 {
-    public Task<Notion> RetrieveNotionNotViewedByUserAsync(int userId, string type);
+    public Task<NotionDetailedDto> RetrieveNotionNotViewedByUserAsync(int userId, string area, string field);
 }

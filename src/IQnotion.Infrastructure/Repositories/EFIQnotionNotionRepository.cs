@@ -13,19 +13,12 @@ public class EFIQnotionRepository : IIQnotionNotionRepository
         _context = context;
     }
 
-    public Task<Notion?> RetrieveNotionNotViewedByUserAsync(int userId, string type)
+    public Task<Notion?> RetrieveNotionNotViewedByUserAsync(int userId, string area, string field)
     {
         return (
             _context.Notions
-                .Where(n => n.Type == type)
-                .GroupJoin(
-                    _context.UserNotions.Where(u => u.UserId == userId),
-                    notion => notion.Id,
-                    history => history.FileId,
-                    (notion, histories) => new { Notion = notion, UserHistories = histories }
-                )
-                .Where(joined => !joined.UserHistories.Any())
-                .Select(joined => joined.Notion)
+                .Where(n => n.Area == area && n.Field == field && !_context.UserNotions
+                    .Any(un => un.UserId == userId && un.FileId == n.Id))
                 .AsNoTracking()
                 .FirstOrDefaultAsync()
         );

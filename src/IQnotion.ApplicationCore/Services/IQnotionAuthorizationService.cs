@@ -2,7 +2,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using IQnotion.ApplicationCore.DataTransferObjects;
-using IQnotion.ApplicationCore.Exceptions;
 using IQnotion.ApplicationCore.Interfaces;
 using IQnotion.ApplicationCore.Models;
 using Microsoft.AspNetCore.Identity;
@@ -32,7 +31,7 @@ public class IQnotionAuthorizationService : IIQnotionAuthorizationService
         return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
     }
 
-    public async Task<IdentityResult> RegisterUser(RegisterUserDto userForRegistration)
+    public Task<IdentityResult> RegisterUser(RegisterUserDto userForRegistration)
     {
         var user = new User
         {
@@ -43,23 +42,14 @@ public class IQnotionAuthorizationService : IIQnotionAuthorizationService
             PhoneNumber = userForRegistration.PhoneNumber,
         };
 
-        var result = await _userManager.CreateAsync(user, userForRegistration.Password);
-        
-        if (result.Succeeded)
-        {
-            await _userManager.AddToRolesAsync(user, new List<string> { "READER" });
-        }
-
-        return result;
+        return _userManager.CreateAsync(user, userForRegistration.Password);
     }
 
     public async Task<bool> ValidateUser(UserForAuthenticationDto userForAuth)
     {
         _user = await _userManager.FindByNameAsync(userForAuth.UserName);
-
-        var result = (_user != null && await _userManager.CheckPasswordAsync(_user, userForAuth.Password));
      
-        return result;
+        return _user != null && await _userManager.CheckPasswordAsync(_user, userForAuth.Password);
     }
 
     private SigningCredentials GetSigningCredentials()
@@ -70,7 +60,7 @@ public class IQnotionAuthorizationService : IIQnotionAuthorizationService
         return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
     }
 
-    private async Task<List<Claim>> GetClaims()
+    private Task<List<Claim>> GetClaims()
     {
         var claims = new List<Claim>
         {
@@ -78,13 +68,7 @@ public class IQnotionAuthorizationService : IIQnotionAuthorizationService
             new Claim(ClaimTypes.Name, _user.UserName)
         };
 
-        var roles = await _userManager.GetRolesAsync(_user);
-        foreach (var role in roles)
-        {
-            claims.Add(new Claim(ClaimTypes.Role, role));
-        }
-
-        return claims;
+        return Task.FromResult(claims);
     }
 
     private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
