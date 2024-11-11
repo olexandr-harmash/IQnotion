@@ -18,13 +18,6 @@ public class IQnotionDbSeed
     public async Task SeedAsync()
     {
         _context.Database.Migrate();
-
-        // Создайте роли, если они не существуют
-     
-        if (!await _roleManager.RoleExistsAsync("reader"))
-        {
-            await _roleManager.CreateAsync(new IdentityRole<int> { Name = "reader", NormalizedName = "READER" });
-        }
         
         // Проверьте, существуют ли уже данные
         if (_context.Notions.Any() || _context.UserNotions.Any())
@@ -35,8 +28,8 @@ public class IQnotionDbSeed
         // Создание начальных данных для таблицы Notion
         var notions = new List<Notion>
         {
-            new Notion { FileName = "id123456789-overview", RelativePath = "asp-dot-net-core/id123456789-overview.md", Type = "tutorial", SupportLanguages = new List<string> { "en", "ru" } },
-            new Notion { FileName = "id123456780-overview", RelativePath = "c-sharp/id123456780-overview.md", Type = "tutorial", SupportLanguages = new List<string> { "en", "ru" } },
+            new Notion { FileName = "id123456789-overview", RelativePath = "programming/asp-dot-net-core/id123456789-overview/id123456789-overview.md", Area = "programming", Field = "asp-dot-net-core", SupportLanguages = new List<string> { "en", "ru" } },
+            new Notion { FileName = "id123456780-overview", RelativePath = "programming/c-sharp/id123456780-overview/id123456780-overview.md", Area = "programming", Field = "c-sharp", SupportLanguages = new List<string> { "en", "ru" } },
             // Добавьте другие данные по необходимости
         };
 
@@ -46,7 +39,7 @@ public class IQnotionDbSeed
         // Создание начальных данных для таблицы UserNotion
         var userNotions = new List<UserNotion>
         {
-            new UserNotion { UserId = 1, FileId = notions[0].Id, ViewedAt = DateTime.UtcNow, Action = "Viewed" },
+            new UserNotion { UserId = 1, FileId = notions[0].Id},
             // Добавьте другие данные по необходимости
         };
 

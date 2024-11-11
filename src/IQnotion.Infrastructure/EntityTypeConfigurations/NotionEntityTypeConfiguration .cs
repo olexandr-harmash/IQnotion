@@ -19,10 +19,12 @@ public class NotionEntityTypeConfiguration  : IEntityTypeConfiguration<Notion>
             .IsRequired()
             .HasMaxLength(255);
 
-        builder.Property(n => n.Type)
+        builder.Property(n => n.Area)
             .IsRequired()
             .HasMaxLength(255);
-        
-        builder.HasIndex(n => n.Type);
+
+        builder.Property(n => n.Field)
+            .IsRequired()
+            .HasMaxLength(255);
     }
 }

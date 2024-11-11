@@ -1,3 +1,4 @@
+using IQnotion.ApplicationCore.DataTransferObjects;
 using IQnotion.ApplicationCore.Exceptions;
 using IQnotion.ApplicationCore.Interfaces;
 using IQnotion.ApplicationCore.Models;
@@ -13,26 +14,33 @@ public class IQnotionNotionService : IIQnotionNotionService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Notion> RetrieveNotionNotViewedByUserAsync(int userId, string type)
+    public async Task<NotionDetailedDto> RetrieveNotionNotViewedByUserAsync(int userId, string area, string field)
     {
-        var notion = await _unitOfWork.Notion.RetrieveNotionNotViewedByUserAsync(userId, type);
+        var notion = await _unitOfWork.Notion.RetrieveNotionNotViewedByUserAsync(userId, area, field);
 
         if (notion == null)
         {
-            throw new NotionNotFoundException(userId, type);
+            throw new NotionNotFoundException(userId, field);
         }
 
         var userNotion = new UserNotion
         {
             FileId = notion.Id,
-            UserId = userId,
-            Action = "Viewed"
+            UserId = userId
         };
 
         _unitOfWork.UserNotion.AddUserNotion(userNotion);
 
         await _unitOfWork.SaveChangesAsync();
 
-        return notion;
+        return new NotionDetailedDto
+        {
+            Id = notion.Id,
+            FileName = notion.FileName,
+            RelativePath = notion.RelativePath,
+            Area = notion.Area,
+            Field = notion.Field,
+            SupportLanguages = notion.SupportLanguages
+        };
     }
 }

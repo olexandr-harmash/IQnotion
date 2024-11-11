@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace IQnotion.Infrastructure.Migrations
 {
     [DbContext(typeof(IQnotionDbContext))]
-    [Migration("20241029213455_InitialIQDbContextCreate")]
-    partial class InitialIQDbContextCreate
+    [Migration("20241111203615_IQnotionInitialMigration")]
+    partial class IQnotionInitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,6 +34,16 @@ namespace IQnotion.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Area")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("Field")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -48,14 +58,7 @@ namespace IQnotion.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text[]");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("Type");
 
                     b.ToTable("Notions");
                 });
@@ -137,28 +140,13 @@ namespace IQnotion.Infrastructure.Migrations
 
             modelBuilder.Entity("IQnotion.ApplicationCore.Models.UserNotion", b =>
                 {
-                    b.Property<int>("Id")
-                        .HasColumnType("integer");
-
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.Property<int>("FileId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Action")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<DateTime>("ViewedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.HasKey("Id", "UserId", "FileId");
-
-                    b.HasIndex("FileId");
+                    b.HasKey("UserId", "FileId");
 
                     b.ToTable("UserNotions");
                 });
@@ -293,15 +281,6 @@ namespace IQnotion.Infrastructure.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("IQnotion.ApplicationCore.Models.UserNotion", b =>
-                {
-                    b.HasOne("IQnotion.ApplicationCore.Models.Notion", null)
-                        .WithMany()
-                        .HasForeignKey("FileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

@@ -15,8 +15,8 @@ public class NotionController : ControllerBase
         _services = services;
     }
 
-    [HttpGet("{type}")]
-    public async Task<IResult> RetrieveNotionNotViewedByUser(string type)
+    [HttpGet("{area}/{filed}")]
+    public async Task<IResult> RetrieveNotionNotViewedByUser(string area, string filed)
     {
         try
         {
@@ -27,7 +27,7 @@ public class NotionController : ControllerBase
             }
 
             var userId = int.Parse(userIdClaim.Value);
-            var notion = await _services.Notion.RetrieveNotionNotViewedByUserAsync(userId, type);
+            var notion = await _services.Notion.RetrieveNotionNotViewedByUserAsync(userId, area, filed);
 
             return TypedResults.Ok(notion);
         } 
