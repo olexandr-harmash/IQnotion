@@ -1,6 +1,21 @@
 version: '3.8'
 
 services:
+  # Сервис для вашего приложения на ASP.NET Core
+  app:
+    build:
+      context: .  # Контекст для сборки, т.е. текущая папка (где находится Dockerfile)
+      dockerfile: Dockerfile  # Имя вашего Dockerfile (по умолчанию он называется Dockerfile)
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      SECRET : 12345secret1238132821038109830831023128jdasodjajdsajdsajdsad9231093KJWAALKF39204029349309290234
+    ports:
+      - "8080:8080"  # Доступ к приложению через порт 5000
+    networks:
+      - my-network
+    depends_on:
+      - postgres  # Убедитесь, что PostgreSQL запускается до вашего приложения
+
   pgadmin:
     image: dpage/pgadmin4
     environment:
