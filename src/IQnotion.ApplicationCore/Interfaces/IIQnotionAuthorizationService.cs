@@ -7,5 +7,6 @@ public interface IIQnotionAuthorizationService
 {
     Task<IdentityResult> RegisterUser(RegisterUserDto userForRegistration);
     Task<bool> ValidateUser(UserForAuthenticationDto userForAuth);
+    Task DeleteUser(int userId);
     Task<string> CreateToken();
 }

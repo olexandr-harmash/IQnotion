@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using IQnotion.ApplicationCore.DataTransferObjects;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +12,22 @@ public class AuthorizationController : ControllerBase
     {
         _services = services;
     }
+
+    [HttpDelete]
+    public async Task<IResult> DeleteUser()
+    {
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+        {
+            return TypedResults.Unauthorized();
+        }
+
+        var userId = int.Parse(userIdClaim.Value);
+
+        await _services.Authorization.DeleteUser(userId);
+
+        return TypedResults.Ok();
+    }   
 
     [HttpPost]
     public async Task<IResult> RegisterUser([FromBody] RegisterUserDto userForRegistration)
