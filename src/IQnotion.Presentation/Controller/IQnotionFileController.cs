@@ -13,8 +13,8 @@ public class FileController : ControllerBase
         _services = services;
     }
 
-    [HttpGet("{lang}/{*path}")]
-    public IActionResult GetFileByPath(string lang, string path)
+    [HttpGet("{*path}")]
+    public IActionResult GetFileByPath([FromQuery] string lang, string path)
     {
         var fullPath = Path.GetFullPath(Path.Join(_services.NotionRootPath, lang, path));
         Console.WriteLine(fullPath);
