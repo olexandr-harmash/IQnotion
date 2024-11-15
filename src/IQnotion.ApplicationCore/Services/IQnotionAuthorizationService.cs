@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using IQnotion.ApplicationCore.DataTransferObjects;
+using IQnotion.ApplicationCore.Exceptions;
 using IQnotion.ApplicationCore.Interfaces;
 using IQnotion.ApplicationCore.Models;
 using Microsoft.AspNetCore.Identity;
@@ -84,5 +85,17 @@ public class IQnotionAuthorizationService : IIQnotionAuthorizationService
         );
 
         return tokenOptions;
+    }
+
+    public async Task DeleteUser(int userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+
+        if (user == null)
+        {
+            throw new UserNotFoundException(userId);
+        }
+
+        await _userManager.DeleteAsync(user);
     }
 }
